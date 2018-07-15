@@ -33,7 +33,8 @@ public class SampleActivity extends AppCompatActivity {
         mTwo.addOnItemsSelectedListener(new MultiSpinnerListener() {
             @Override
             public void onItemsSelected(List<String> choices, boolean[] selected) {
-                
+                for(int i=0;i<choices.size();i++)
+                    Toast.makeText(SampleActivity.this, choices.get(i), Toast.LENGTH_SHORT).show();
             }
         });
     }
