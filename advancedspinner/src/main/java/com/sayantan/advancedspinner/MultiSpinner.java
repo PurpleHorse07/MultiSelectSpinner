@@ -148,4 +148,11 @@ public class MultiSpinner extends AppCompatSpinner implements OnMultiChoiceClick
         selected = choice;
         setItems();
     }
+
+    public void setSpinnerList(List<String> list){
+        items=new ArrayList<>();
+        items.addAll(list);
+        initiate();
+        //setItems();
+    }
 }
