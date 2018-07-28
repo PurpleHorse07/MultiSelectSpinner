@@ -14,6 +14,8 @@ import android.widget.ArrayAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.sayantan.advancedspinner.R.*;
+
 public class MultiSpinner extends AppCompatSpinner implements OnMultiChoiceClickListener, OnCancelListener {
     boolean[] change;
     CharSequence[] entries;
@@ -24,6 +26,7 @@ public class MultiSpinner extends AppCompatSpinner implements OnMultiChoiceClick
     private String defaultText = "Nothing Choosen";
     private String spinnerTitle = "Choose From List";
     private MultiSpinnerListener listener;
+    private int layout;
 
     public MultiSpinner(Context context) {
         super(context);
@@ -31,21 +34,24 @@ public class MultiSpinner extends AppCompatSpinner implements OnMultiChoiceClick
 
     public MultiSpinner(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
-        adapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_dropdown, new String[]{defaultText});
-        @SuppressLint("CustomViewStyleable") TypedArray a = context.obtainStyledAttributes(attributeSet, R.styleable.CustomSpinner);
+        layout=R.layout.item_spinner_dropdown;
+        @SuppressLint("CustomViewStyleable") TypedArray a = context.obtainStyledAttributes(attributeSet, styleable.CustomSpinner);
         final int N = a.getIndexCount();
         for (int i = 0; i < N; ++i) {
             int attr = a.getIndex(i);
-            if (attr == R.styleable.CustomSpinner_hintText) {
+            if (attr == styleable.CustomSpinner_titleText) {
                 spinnerTitle = a.getString(attr);
             }
-            if (attr == R.styleable.CustomSpinner_entries) {
+            if (attr == styleable.CustomSpinner_entries) {
                 entries = a.getTextArray(attr);
                 for (CharSequence entry : entries)
                     items.add((String) entry);
                 initiate();
             }
+            if (attr == styleable.CustomSpinner_spinnerLayout)
+                layout = a.getResourceId(attr, R.layout.item_spinner_dropdown);
         }
+        adapter = new ArrayAdapter<>(getContext(), layout, new String[]{defaultText});
         a.recycle();
         setAdapter(adapter);
     }
@@ -117,7 +123,7 @@ public class MultiSpinner extends AppCompatSpinner implements OnMultiChoiceClick
             spinnerText = spinnerText.substring(0, spinnerText.length() - 2);
         else
             spinnerText = defaultText;
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_dropdown, new String[]{spinnerText});
+        adapter = new ArrayAdapter<>(getContext(), layout, new String[]{spinnerText});
         setAdapter(adapter);
         if (listener != null) {
             if (selected.length > 0) {
@@ -139,6 +145,15 @@ public class MultiSpinner extends AppCompatSpinner implements OnMultiChoiceClick
         return spinnerText;
     }
 
+    public ArrayList<String> getSelectedItems(){
+        ArrayList<String> choice=new ArrayList<>();
+        for(int i=0;i<selected.length;i++){
+            if(selected[i])
+                choice.add(items.get(i));
+        }
+        return choice;
+    }
+
     public boolean[] getSelected() {
         return selected;
     }
@@ -149,10 +164,21 @@ public class MultiSpinner extends AppCompatSpinner implements OnMultiChoiceClick
         setItems();
     }
 
+    public  void selectNone(){
+        for(int i=0;i<selected.length;i++)
+            selected[i]=false;
+        for(int i=0;i<change.length;i++)
+            change[i]=false;
+    }
+
     public void setSpinnerList(List<String> list){
         items=new ArrayList<>();
         items.addAll(list);
         initiate();
-        //setItems();
+    }
+
+    public void setLayout(int layoutId){
+        layout=layoutId;
+        setItems();
     }
 }

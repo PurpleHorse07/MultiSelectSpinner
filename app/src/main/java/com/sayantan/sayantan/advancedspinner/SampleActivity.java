@@ -37,5 +37,7 @@ public class SampleActivity extends AppCompatActivity {
                     Toast.makeText(SampleActivity.this, choices.get(i), Toast.LENGTH_SHORT).show();
             }
         });
+
+        mTwo.setLayout(R.layout.item);
     }
 }

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.support.v7.widget.AppCompatSpinner;
+import android.text.Layout;
 import android.util.AttributeSet;
 import android.widget.ArrayAdapter;
 
@@ -21,6 +22,7 @@ public class SingleSpinner extends AppCompatSpinner {
     private String defaultText = "Not Selected";
     private String spinnerTitle = "Select An Item";
     private SpinnerListener listener;
+    private int layout=R.layout.item_spinner_dropdown;
 
     public SingleSpinner(Context context) {
         super(context);
@@ -28,12 +30,11 @@ public class SingleSpinner extends AppCompatSpinner {
 
     public SingleSpinner(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
-        adapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_dropdown, new String[]{defaultText});
         @SuppressLint("CustomViewStyleable") TypedArray a = context.obtainStyledAttributes(attributeSet, R.styleable.CustomSpinner);
         final int N = a.getIndexCount();
         for (int i = 0; i < N; ++i) {
             int attr = a.getIndex(i);
-            if (attr == R.styleable.CustomSpinner_hintText) {
+            if (attr == R.styleable.CustomSpinner_titleText) {
                 spinnerTitle = a.getString(attr);
             }
             if (attr == R.styleable.CustomSpinner_entries) {
@@ -42,7 +43,11 @@ public class SingleSpinner extends AppCompatSpinner {
                     items.add((String) entry);
                 selected = -1;
             }
+            if (attr == R.styleable.CustomSpinner_spinnerLayout) {
+                layout=a.getResourceId(attr,R.layout.item_spinner_dropdown);
+            }
         }
+        adapter = new ArrayAdapter<>(getContext(), layout, new String[]{defaultText});
         a.recycle();
         setAdapter(adapter);
     }
@@ -75,16 +80,11 @@ public class SingleSpinner extends AppCompatSpinner {
         return true;
     }
 
-    public void selectNone() {
-        selected = -1;
-        setItems();
-    }
-
     private void setItems() {
         spinnerText = defaultText;
         if (selected >= 0)
             spinnerText = items.get(selected);
-        adapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_dropdown, new String[]{spinnerText});
+        adapter = new ArrayAdapter<>(getContext(), layout, new String[]{spinnerText});
         setAdapter(adapter);
         if (listener != null) {
             if (selected > -1)
@@ -92,6 +92,11 @@ public class SingleSpinner extends AppCompatSpinner {
             else
                 listener.onItemChoosen(null, selected);
         }
+    }
+
+    public void selectNone() {
+        selected = -1;
+        setItems();
     }
 
     public void addOnItemChoosenListener(SpinnerListener listener) {
@@ -114,10 +119,9 @@ public class SingleSpinner extends AppCompatSpinner {
         setItems();
     }
 
-    public String getAdapterText() {
-        return spinnerText;
+    public void setSpinnerTitle(String title){
+        spinnerTitle=title;
     }
-
     public void setSpinnerList(List<String> list) {
         items = new ArrayList<>();
         items.addAll(list);

@@ -46,7 +46,8 @@
             android:id="@+id/single_one"
             android:layout_height="wrap_content"
             app:entries="@array/items"
-            app:title="Spinner Title" />
+            app:title="Spinner Title"
+            app:spinnerLayout="@layout/item"/>
 
         <com.sayantan.advancedspinner.SingleSpinner
             android:layout_width="match_parent"
